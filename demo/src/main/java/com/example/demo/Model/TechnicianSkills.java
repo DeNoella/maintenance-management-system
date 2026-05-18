@@ -2,7 +2,7 @@ package com.example.demo.Model;
 
 @Entity 
 @Table(name = "Technician_skills")
-public class Technician_skills {
+public class TechnicianSkills {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
