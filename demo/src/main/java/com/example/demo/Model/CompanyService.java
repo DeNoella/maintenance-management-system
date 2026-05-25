@@ -1,12 +1,19 @@
-package com.example.demo.Model;
+package com.example.mms.model;
 
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "company_services", 
-    uniqueConstraints = @UniqueConstraint(columnNames = {"company_id", "service_id}))
+@Table(name = "company_services",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"company_id", "service_id"}))
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CompanyService {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -15,6 +22,5 @@ public class CompanyService {
 
     @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
-
+    private ServiceType service;
 }

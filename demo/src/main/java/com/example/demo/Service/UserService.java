@@ -1,89 +1,110 @@
-package com.example.demo.Service;
+package com.example.mms.service;
+
+import com.example.mms.dto.CreateUserRequest;
+import com.example.mms.model.*;
+import com.example.mms.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BranchRepository BranchRepository;
+    private final BranchRepository branchRepository;
     private final TechnicianSkillRepository skillRepository;
-    private final ActivityLogRepository activityLogRepository;
+    private final ActivityLogService activityLogService;
     private final PasswordEncoder passwordEncoder;
 
-    public User createUser(String username, String fullName, String phone,
-        Role role, Long branchId, String rawPassword, Long adminId) {
-
-        if (userRepository.findByUsername(username).isPresent())
-            throws new RuntimeException("username already exists")
-
-        User user = new User();
-        user.setUsername(username);
-        user.setFullName(fullName);
-        user.setPhone(phone);
-        user.setRole(role);
-        user.setPasswordHash(passwordEncoder.encode(rawPassword));
-        user.setIsActive(true);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-
-        if(branchId != null) {
-            Branch branch = branchRepository.findById(branchId)
-               .orElseThrow(() -> new RuntimeException("Branch not found"));
-            user.setBranch(branch);
+    // US-A2: Admin creates Branch Manager or Technician
+    public User createUser(CreateUserRequest req, Long actorId) {
+        if (userRepository.existsByUsername(req.getUsername())) {
+            throw new RuntimeException("Username already exists: " + req.getUsername());
         }
 
-        User saved = userRepository.save(user);
-        logActivity(adminId, "CREATE_USER", "USER", saved.getId(), "Created user:" + username);
-        return saved;
-}
+        Role role = Role.valueOf(req.getRole());
 
-    public User createTechnician(String username, String fullName, String phone,
-        Long branchId, String rawPassword,
-        List<String> skills, Long managerId) {
-            User tech = createUser(username, fullName, phone, Role.TECHNICIAN, branchId, rawPassword, maanagerId);
+        // Branch Manager cannot create Admin or another Branch Manager
+        User actor = userRepository.findById(actorId)
+                .orElseThrow(() -> new RuntimeException("Actor not found"));
 
-            if(skills !=null) {
-                skills.forEach(skillName -> {
-                    TechnicianSkill skill = new TechnicianSkill();
-                    skill.setTechnician(tech);
-                    skill.setSkillName(skillName);
-                    skillRepository.save(skill);
-                });
+        if (actor.getRole() == Role.BRANCH_MANAGER) {
+            if (role != Role.TECHNICIAN) {
+                throw new RuntimeException("Branch Managers can only create Technician accounts.");
             }
-            return tech;
+            // Branch Manager can only create technicians for their own branch
+            if (!actor.getBranch().getId().equals(req.getBranchId())) {
+                throw new RuntimeException("Branch Manager can only create technicians for their own branch.");
+            }
         }
 
-    public User deactiveUser(Long userId, Long adminId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User bot found"));
-        user.setIsActive(false);
-        user.setUpdateAt(LocalDateTime.now());
+        Branch branch = null;
+        if (req.getBranchId() != null) {
+            branch = branchRepository.findById(req.getBranchId())
+                    .orElseThrow(() -> new RuntimeException("Branch not found"));
+        }
+
+        User user = User.builder()
+                .username(req.getUsername())
+                .fullName(req.getFullName())
+                .phone(req.getPhone())
+                .role(role)
+                .passwordHash(passwordEncoder.encode(req.getPassword()))
+                .branch(branch)
+                .isActive(true)
+                .build();
+
         User saved = userRepository.save(user);
-        logActivity(adminId, "DEACTIVATE_USER", "User", userId, "Deactivated user: " + user.getUsername());
+
+        // US-BM3: Save technician skills if provided
+        if (role == Role.TECHNICIAN && req.getSkills() != null) {
+            req.getSkills().forEach(skillName -> {
+                TechnicianSkill skill = TechnicianSkill.builder()
+                        .technician(saved)
+                        .skillName(skillName)
+                        .build();
+                skillRepository.save(skill);
+            });
+        }
+
+        activityLogService.log(actorId, "CREATE_USER", "User", saved.getId(),
+                "Created user: " + saved.getUsername() + " role: " + role);
+
         return saved;
     }
 
-    public List<User> getAllUsers() { return userRepository.findAll(); }
+    // US-A2: Deactivate user
+    public User deactivateUser(Long userId, Long adminId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setIsActive(false);
+        User saved = userRepository.save(user);
+        activityLogService.log(adminId, "DEACTIVATE_USER", "User", userId,
+                "Deactivated: " + user.getUsername());
+        return saved;
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 
     public List<User> getUsersByBranch(Long branchId) {
         return userRepository.findByBranchId(branchId);
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+    public List<User> getTechniciansByBranch(Long branchId) {
+        return userRepository.findByBranchIdAndRole(branchId, Role.TECHNICIAN);
     }
 
-    private void logActivity(Long userId, String action, String entityType, Long entityId, String details) {
-        ActivityLog log = new ActivityLog();
-        log.setUser(userRepository.findById(userId).orElse(null));
-        log.setActionType(action);
-        log.setEntityType(entityType);
-        log.setEntityId(entityId);
-        log.setDetails(details);
-        log.setPerformedAt(LocalDateTime.now());
-        activityLogRepository.save(log);
+    public List<TechnicianSkill> getSkillsByTechnician(Long technicianId) {
+        return skillRepository.findByTechnicianId(technicianId);
     }
-
-
 }

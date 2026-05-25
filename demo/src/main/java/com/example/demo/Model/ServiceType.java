@@ -1,19 +1,19 @@
-package com.example.demo.Model;
+package com.example.mms.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name="services")
+@Table(name = "services")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ServiceType {
 
-    @id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, unique = true, length = 100)
     private String name;
@@ -23,5 +23,4 @@ public class ServiceType {
 
     @Column(name = "is_active")
     private Boolean isActive = true;
-
 }

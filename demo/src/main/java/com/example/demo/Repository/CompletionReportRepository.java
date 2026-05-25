@@ -5,4 +5,5 @@ public interface CompletionReportRepository extends JpaRepository<CompletionRepo
     Optional<CompletionReport> findByRequestId(Long requestId);
     List<CompletionReport> findByTechnicianId(Long technicianId);
     List<CompletionReport> findByApprovalStatus(ApprovalStatus status);
+    List<CompletionReport> findByRequest_BranchId(Long branchId);
 }
