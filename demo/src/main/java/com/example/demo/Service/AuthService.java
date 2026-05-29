@@ -1,10 +1,10 @@
 package com.example.demo.Service;
 
-import com.example.mms.dto.LoginRequest;
-import com.example.mms.dto.LoginResponse;
-import com.example.mms.model.User;
-import com.example.mms.repository.UserRepository;
-import com.example.mms.security.JwtUtil;
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.LoginResponse;
+import com.example.demo.Model.User;
+import com.example.demo.Repository.UserRepository;
+import com.example.demo.Security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name(), user.getId());
 
-        activityLogService.log(user.getId(), "LOGIN", "User", user.getId(),
+        activityLogService.log(user.getId(), "LOGIN", user.getId(), "User",
                 "User logged in: " + user.getUsername());
 
         return new LoginResponse(token, user.getRole().name(), user.getId(), user.getFullName());

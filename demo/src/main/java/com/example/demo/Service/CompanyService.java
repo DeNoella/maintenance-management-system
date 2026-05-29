@@ -1,10 +1,11 @@
-package com.example.mms.service;
+package com.example.demo.Service;
 
-import com.example.mms.dto.CreateCompanyRequest;
-import com.example.mms.model.*;
-import com.example.mms.repository.*;
+import com.example.demo.dto.CreateCompanyRequest;
+import com.example.demo.Model.*;
+import com.example.demo.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.example.demo.Service.*;
 
 import java.util.List;
 
@@ -35,21 +36,28 @@ public class CompanyService {
 
         // Attach services
         if (req.getServiceIds() != null) {
-            req.getServiceIds().forEach(serviceId -> {
-                ServiceType serviceType = serviceTypeRepository.findById(serviceId)
-                        .orElseThrow(() -> new RuntimeException("Service not found: " + serviceId));
-                CompanyService cs = CompanyService.builder()
-                        .company(saved)
-                        .service(serviceType)
-                        .build();
-                companyServiceRepository.save(cs);
-            });
-        }
+    req.getServiceIds().forEach(serviceId -> {
 
-        activityLogService.log(adminId, "CREATE_COMPANY", "Company", saved.getId(),
+        ServiceType serviceType = serviceTypeRepository.findById(serviceId)
+                .orElseThrow(() ->
+                        new RuntimeException("Service not found: " + serviceId));
+
+        com.example.demo.Model.CompanyService cs =
+        com.example.demo.Model.CompanyService.builder()
+                .company(saved)
+                .service(serviceType)
+                .build();
+
+        companyServiceRepository.save(cs);
+    });
+}
+
+        activityLogService.log(adminId, "CREATE_COMPANY", saved.getId(), "Company",
                 "Created company: " + saved.getName());
         return saved;
     }
+
+    
 
     // US-A3: Edit company
     public Company updateCompany(Long companyId, CreateCompanyRequest req, Long adminId) {
@@ -60,7 +68,7 @@ public class CompanyService {
         company.setAddress(req.getAddress());
         company.setRobCertificate(req.getRobCertificate());
         Company saved = companyRepository.save(company);
-        activityLogService.log(adminId, "UPDATE_COMPANY", "Company", companyId,
+        activityLogService.log(adminId, "UPDATE_COMPANY", companyId, "Company",
                 "Updated company: " + saved.getName());
         return saved;
     }
@@ -71,7 +79,7 @@ public class CompanyService {
                 .orElseThrow(() -> new RuntimeException("Company not found"));
         company.setIsActive(false);
         Company saved = companyRepository.save(company);
-        activityLogService.log(adminId, "DEACTIVATE_COMPANY", "Company", companyId, "Deactivated company");
+        activityLogService.log(adminId, "DEACTIVATE_COMPANY", companyId, "Company", "Deactivated company");
         return saved;
     }
 
@@ -88,7 +96,7 @@ public class CompanyService {
         return serviceTypeRepository.findAll();
     }
 
-    public List<CompanyService> getServicesByCompany(Long companyId) {
+    public List<com.example.demo.Model.CompanyService> getServicesByCompany(Long companyId) {
         return companyServiceRepository.findByCompanyId(companyId);
     }
 }

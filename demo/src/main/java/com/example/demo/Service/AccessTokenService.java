@@ -1,8 +1,10 @@
-package com.example.mms.service;
+package com.example.demo.Service;
 
-import com.example.mms.dto.TokenVerifyRequest;
-import com.example.mms.model.*;
-import com.example.mms.repository.*;
+import com.example.demo.dto.TokenVerifyRequest;
+import com.example.demo.Enum.Decision;
+import com.example.demo.Enum.TokenStatus;
+import com.example.demo.Model.*;
+import com.example.demo.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ public class AccessTokenService {
     private final TokenVerificationRepository verificationRepository;
     private final UserRepository userRepository;
     private final ActivityLogService activityLogService;
+    public Object revokeService;
 
     // US-T3: Technician views their own tokens
     public List<AccessToken> getTokensByTechnician(Long technicianId) {
@@ -53,7 +56,7 @@ public class AccessTokenService {
         TokenVerification saved = verificationRepository.save(verification);
 
         activityLogService.log(req.getManagerId(), "VERIFY_TOKEN",
-                "AccessToken", token.getId(),
+                token.getId(), "AccessToken",
                 "Decision: " + decision + " for token: " + req.getTokenCode());
 
         return saved;
@@ -65,7 +68,7 @@ public class AccessTokenService {
                 .orElseThrow(() -> new RuntimeException("Token not found"));
         token.setStatus(TokenStatus.REVOKED);
         AccessToken saved = tokenRepository.save(token);
-        activityLogService.log(adminId, "REVOKE_TOKEN", "AccessToken", tokenId, "Token revoked");
+        activityLogService.log(adminId, "REVOKE_TOKEN", tokenId, "Token revoked", null);
         return saved;
     }
 

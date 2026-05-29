@@ -1,10 +1,8 @@
-package com.example.mms.controller;
+package com.example.demo.Controller;
 
-import com.example.mms.dto.CreateCompanyRequest;
-import com.example.mms.model.Company;
-import com.example.mms.model.CompanyService;
-import com.example.mms.model.ServiceType;
-import com.example.mms.service.CompanyService;
+import com.example.demo.dto.CreateCompanyRequest;
+import com.example.demo.Model.*;
+import com.example.demo.Service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -89,7 +87,7 @@ public class CompanyController {
      * GET /api/companies/{id}/services
      */
     @GetMapping("/{id}/services")
-    public ResponseEntity<List<CompanyService>> getCompanyServices(@PathVariable Long id) {
+    public ResponseEntity<List<com.example.demo.Model.CompanyService>> getCompanyServices(@PathVariable Long id) {
         return ResponseEntity.ok(companyService.getServicesByCompany(id));
     }
 }

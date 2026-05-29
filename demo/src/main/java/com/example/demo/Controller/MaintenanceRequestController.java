@@ -1,9 +1,9 @@
-package com.example.mms.controller;
+package com.example.demo.Controller;
 
-import com.example.mms.dto.MaintenanceRequestDTO;
-import com.example.mms.dto.UpdateStatusRequest;
-import com.example.mms.model.MaintenanceRequest;
-import com.example.mms.service.MaintenanceRequestService;
+import com.example.demo.dto.MaintenanceRequestDTO;
+import com.example.demo.dto.UpdateStatusRequest;
+import com.example.demo.Model.MaintenanceRequest;
+import com.example.demo.Service.MaintenanceRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

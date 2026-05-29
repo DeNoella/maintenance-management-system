@@ -1,13 +1,16 @@
-package com.example.mms.service;
+package com.example.demo.Service;
 
-import com.example.mms.dto.CreateUserRequest;
-import com.example.mms.model.*;
-import com.example.mms.repository.*;
+import com.example.demo.dto.CreateUserRequest;
+import com.example.demo.Model.*;
+import com.example.demo.Repository.*;
+import com.example.demo.Enum.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import com.example.demo.Enum.Role;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +52,7 @@ public class UserService {
 
         User user = User.builder()
                 .username(req.getUsername())
-                .fullName(req.getFullName())
+                .fullName(req.getFullname())
                 .phone(req.getPhone())
                 .role(role)
                 .passwordHash(passwordEncoder.encode(req.getPassword()))
@@ -70,7 +73,7 @@ public class UserService {
             });
         }
 
-        activityLogService.log(actorId, "CREATE_USER", "User", saved.getId(),
+        activityLogService.log(actorId, "CREATE_USER", saved.getId(), "User",
                 "Created user: " + saved.getUsername() + " role: " + role);
 
         return saved;
@@ -82,7 +85,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setIsActive(false);
         User saved = userRepository.save(user);
-        activityLogService.log(adminId, "DEACTIVATE_USER", "User", userId,
+        activityLogService.log(adminId, "DEACTIVATE_USER", userId, "User",
                 "Deactivated: " + user.getUsername());
         return saved;
     }

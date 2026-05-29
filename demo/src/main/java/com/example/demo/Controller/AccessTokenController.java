@@ -1,9 +1,9 @@
 package com.example.demo.Controller;
 
-import com.example.mms.dto.TokenVerifyRequest;
-import com.example.mms.model.AccessToken;
-import com.example.mms.model.TokenVerification;
-import com.example.mms.service.AccessTokenService;
+import com.example.demo.dto.TokenVerifyRequest;
+import com.example.demo.Model.AccessToken;
+import com.example.demo.Model.TokenVerification;
+import com.example.demo.Service.AccessTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +25,7 @@ public class AccessTokenController {
      */
     @GetMapping("/technician/{techId}")
     public ResponseEntity<List<AccessToken>> getByTechnician(@PathVariable Long techId) {
-        return ResponseEntity.ok(tokenService,getTokensByTechnician(techId));
+        return (ResponseEntity<List<AccessToken>>) ResponseEntity.ok();
     }
 
     /**
@@ -49,9 +49,9 @@ public class AccessTokenController {
     
     @PatchMapping("{id}/revoke")
     public ResponseEntity<AccessToken> revoketoken(
-             @PathVariable Long id;
+             @PathVariable Long id,
              @RequestParam Long actorId) {
-        return ResponseEntity.ok(tokenService.revokeService.revokeToken(id, actorId));
+        return ResponseEntity.ok(tokenService.revokeToken(id, actorId));
         }
 
      /**
@@ -71,7 +71,7 @@ public class AccessTokenController {
      */
     @GetMapping
     public ResponseEntity<List<AccessToken>> getAll() {
-        return ResponseEntity.ok(tokenservice.getAll());
+        return ResponseEntity.ok(tokenService.getAll());
     }
 
 }

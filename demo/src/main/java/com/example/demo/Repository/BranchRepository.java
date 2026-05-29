@@ -1,6 +1,6 @@
 package com.example.demo.Repository;
 
-import com.example.mms.model.Branch;
+import com.example.demo.Model.Branch;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

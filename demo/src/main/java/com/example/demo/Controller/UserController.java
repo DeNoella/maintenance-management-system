@@ -1,9 +1,9 @@
-package com.example.mms.controller;
+package com.example.demo.Controller;
 
-import com.example.mms.dto.CreateUserRequest;
-import com.example.mms.model.TechnicianSkill;
-import com.example.mms.model.User;
-import com.example.mms.service.UserService;
+import com.example.demo.dto.CreateUserRequest;
+import com.example.demo.Model.TechnicianSkill;
+import com.example.demo.Model.User;
+import com.example.demo.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

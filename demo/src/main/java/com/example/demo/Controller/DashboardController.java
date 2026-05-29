@@ -1,10 +1,11 @@
-package com.example.mms.controller;
+package com.example.demo.Controller;
 
-import com.example.mms.dto.DashboardStats;
-import com.example.mms.service.DashboardService;
+import com.example.demo.dto.DashboardStats;
+import com.example.demo.Service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/dashboard")

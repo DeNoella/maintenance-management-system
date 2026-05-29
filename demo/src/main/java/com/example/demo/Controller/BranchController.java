@@ -1,8 +1,8 @@
 package com.example.demo.Controller;
 
-import com.example.mms.dto.CreateBranchRequest;
-import com.example.mms.model.Branch;
-import com.example.mms.service.BranchService;
+import com.example.demo.dto.CreateBranchRequest;
+import com.example.demo.Model.Branch;
+import com.example.demo.Service.BranchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +39,7 @@ public class BranchController {
         @PathVariable Long id,
         @RequestBody CreateBranchRequest request,
         @RequestParam Long actorId) {
-            return responseEntity.ok(branchService.updateBranch(id, request, actorId));
+            return ResponseEntity.ok(branchService.updateBranch(id, request, actorId));
         }
     /**
      * US-A4 — Admin deactivates a branch

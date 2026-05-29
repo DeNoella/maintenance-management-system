@@ -1,10 +1,10 @@
-package com.example.mms.service;
+package com.example.demo.Service;
 
-import com.example.mms.dto.CreateBranchRequest;
-import com.example.mms.model.Branch;
-import com.example.mms.model.Company;
-import com.example.mms.repository.BranchRepository;
-import com.example.mms.repository.CompanyRepository;
+import com.example.demo.*;
+import com.example.demo.Model.*;
+import com.example.demo.Repository.*;
+import com.example.demo.dto.CreateBranchRequest;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ public class BranchService {
                 .build();
 
         Branch saved = branchRepository.save(branch);
-        activityLogService.log(adminId, "CREATE_BRANCH", "Branch", saved.getId(),
+        activityLogService.log(adminId, "CREATE_BRANCH", saved.getId(), "Branch",
                 "Created branch: " + saved.getName());
         return saved;
     }
@@ -43,7 +43,7 @@ public class BranchService {
         branch.setName(req.getName());
         branch.setAddress(req.getAddress());
         Branch saved = branchRepository.save(branch);
-        activityLogService.log(adminId, "UPDATE_BRANCH", "Branch", branchId,
+        activityLogService.log(adminId, "UPDATE_BRANCH", branchId, "Branch",
                 "Updated branch: " + saved.getName());
         return saved;
     }
@@ -54,7 +54,7 @@ public class BranchService {
                 .orElseThrow(() -> new RuntimeException("Branch not found"));
         branch.setIsActive(false);
         Branch saved = branchRepository.save(branch);
-        activityLogService.log(adminId, "DEACTIVATE_BRANCH", "Branch", branchId, "Deactivated branch");
+        activityLogService.log(adminId, "DEACTIVATE_BRANCH", branchId, "Branch", "Deactivated branch");
         return saved;
     }
 

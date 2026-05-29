@@ -1,9 +1,14 @@
-package com.example.mms.service;
+package com.example.demo.Service;
 
-import com.example.mms.dto.MaintenanceRequestDTO;
-import com.example.mms.dto.UpdateStatusRequest;
-import com.example.mms.model.*;
-import com.example.mms.repository.*;
+import com.example.demo.dto.MaintenanceRequestDTO;
+import com.example.demo.dto.UpdateStatusRequest;
+import com.example.demo.Enum.*;
+import com.example.demo.Enum.Role;
+import com.example.demo.Model.AccessToken;
+import com.example.demo.Model.Branch;
+import com.example.demo.Model.MaintenanceRequest;
+import com.example.demo.Model.User;
+import com.example.demo.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +50,7 @@ public class MaintenanceRequestService {
 
         MaintenanceRequest saved = requestRepository.save(request);
         activityLogService.log(dto.getTechnicianId(), "SUBMIT_REQUEST",
-                "MaintenanceRequest", saved.getId(), "Submitted maintenance request for branch: " + branch.getName());
+                saved.getId(), "MaintenanceRequest", "Submitted maintenance request for branch: " + branch.getName());
         return saved;
     }
 
@@ -65,7 +70,7 @@ public class MaintenanceRequestService {
         }
 
         activityLogService.log(dto.getManagerId(), "UPDATE_REQUEST_STATUS",
-                "MaintenanceRequest", requestId, "Status changed to: " + newStatus);
+                requestId, "MaintenanceRequest", "Status changed to: " + newStatus);
         return saved;
     }
 
