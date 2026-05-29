@@ -1,14 +1,24 @@
-package com.example.demo.Model;
+package com.example.mms.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "maintenance_requests", 
-    indexes = {
-        @Index(columnList = "status"),
-        @Index(columnList = "submitted_at")
-    })
+@Table(name = "maintenance_requests",
+        indexes = {
+                @Index(columnList = "status"),
+                @Index(columnList = "submitted_at")
+        })
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class MaintenanceRequest {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -36,4 +46,16 @@ public class MaintenanceRequest {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        submittedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (status == null) status = RequestStatus.PENDING;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

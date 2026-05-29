@@ -1,8 +1,16 @@
 package com.example.demo.Model;
 
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "activity_logs",
-    indexes = { @Index(columnList = "performed_at")})
+         indexes = { @Index(columnList = "performed_at")})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ActivityLog {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

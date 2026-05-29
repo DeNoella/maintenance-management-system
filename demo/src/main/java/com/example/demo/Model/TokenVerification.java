@@ -1,4 +1,4 @@
-package com.example.demo.Model;
+package com.example.mms.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,14 +10,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class TokenVerification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn(name = "token_id", nullable = false)
     private AccessToken token;
 
@@ -38,5 +37,4 @@ public class TokenVerification {
     protected void onCreate() {
         verifiedAt = LocalDateTime.now();
     }
-
 }

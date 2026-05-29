@@ -1,84 +1,109 @@
-package com.example.demo.Service;
+package com.example.mms.service;
+
+import com.example.mms.dto.MaintenanceRequestDTO;
+import com.example.mms.dto.UpdateStatusRequest;
+import com.example.mms.model.*;
+import com.example.mms.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class MaintenanceRequestService {
 
-    private final MaintenanceRequest requestRepository;
+    private final MaintenanceRequestRepository requestRepository;
     private final AccessTokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final BranchRepository branchRepository;
-    private final ActivityLogRepository activityLogRepository;
+    private final ActivityLogService activityLogService;
 
-    public MaintenanceRequest submitRequest(Long technicianId, Long branchId,
-                              String issueDescription, Priority priority,
-                              LocalDate preferredVisitDate) {
-        User tech = userRepository.findById(technicianId)
-            .orElseThrow(() -> new RuntimeException("Technician not found"));
-        Branch branch = branchRepository.findById(branchId)
-            .orElseThrow(() -> new RuntimeException("Branch not found"));
-        
-        MaintenanceRequest req = new MaintenanceRequest();
-        req.setTechnician(tech);
-        req.setBranch(branch);
-        req.setIssueDescription(issueDescription);
-        req.setPriority(priority);
-        req.setPreferresVisitDate(preferredVisitDate);
-        req.setSubmittedAt(LocalDateTime.now());
+    // US-T2: Technician submits a maintenance request
+    public MaintenanceRequest submitRequest(MaintenanceRequestDTO dto) {
+        User technician = userRepository.findById(dto.getTechnicianId())
+                .orElseThrow(() -> new RuntimeException("Technician not found"));
 
-        MaintenanceRequest saved = requestRepository.save(req);
-        logActivity(technicianId, "SUBMIT_REQUEST","MaintenanceRequest", saved.getId(), "Submitted maintenance request");
+        if (technician.getRole() != Role.TECHNICIAN) {
+            throw new RuntimeException("Only technicians can submit maintenance requests.");
+        }
+
+        Branch branch = branchRepository.findById(dto.getBranchId())
+                .orElseThrow(() -> new RuntimeException("Branch not found"));
+
+        MaintenanceRequest request = MaintenanceRequest.builder()
+                .technician(technician)
+                .branch(branch)
+                .issueDescription(dto.getIssueDescription())
+                .priority(Priority.valueOf(dto.getPriority()))
+                .status(RequestStatus.PENDING)
+                .preferredVisitDate(LocalDate.parse(dto.getPreferredVisitDate()))
+                .build();
+
+        MaintenanceRequest saved = requestRepository.save(request);
+        activityLogService.log(dto.getTechnicianId(), "SUBMIT_REQUEST",
+                "MaintenanceRequest", saved.getId(), "Submitted maintenance request for branch: " + branch.getName());
         return saved;
     }
 
-    public MaintenanceRequest updateStatus(Log requestId, RequestStatus newStatus, Long managerId) {
-        MaintenanceRequest req = requestRepository.findById(requestId)
-            .orElseThrow(() -> new RuntimeException("Request not found"));
-        
-        req.setStatus(newStatus);
-        req.setUpdatedAt(LocalDateTime.now());
-        MaintenanceRequest saved = requestRepository.save(req);
+    // US-BM1: Branch Manager approves or rejects request
+    // When approved → auto-generate access token
+    public MaintenanceRequest updateStatus(Long requestId, UpdateStatusRequest dto) {
+        MaintenanceRequest request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
 
+        RequestStatus newStatus = RequestStatus.valueOf(dto.getStatus());
+        request.setStatus(newStatus);
+        MaintenanceRequest saved = requestRepository.save(request);
+
+        // Auto-generate token when approved (US-T2 acceptance criteria)
         if (newStatus == RequestStatus.APPROVED) {
-            generateToken(saved);
+            generateAccessToken(saved);
         }
-        logActivity(managerId, "UPDATE_REQUEST_STATUS", "MaintenanceRequest", requestId,
-            "Status changed to: " + newStatus);
-            return saved;
+
+        activityLogService.log(dto.getManagerId(), "UPDATE_REQUEST_STATUS",
+                "MaintenanceRequest", requestId, "Status changed to: " + newStatus);
+        return saved;
     }
 
-    private void generateToken(MaintenanceRequest request) {
-        AccessToken token = new AccessToken();
-        token.setRequest(request);
-        token.setTechnician(request.getTechnician());
-        token.setBranch(request.getBranch());
-        token.setTokenCode(UUID.randomUUID().toString());
-        token.setQrData("MMMS-TOKEN" + token.getTokenCode());
-        token.setStatus(TokenStatus.ACTIVE);
-        token.setValideFrom(LocalDateTime.now());
-        token.setExpiresAt(LocalDateTime.now().plusDays(7));
-        token.setCreatedAt(LocalDateTime.now());
+    // Internal: generates token automatically on approval
+    private void generateAccessToken(MaintenanceRequest request) {
+        String tokenCode = UUID.randomUUID().toString();
+        AccessToken token = AccessToken.builder()
+                .request(request)
+                .technician(request.getTechnician())
+                .branch(request.getBranch())
+                .tokenCode(tokenCode)
+                .qrData("MMS-TOKEN:" + tokenCode)
+                .status(TokenStatus.ACTIVE)
+                .validFrom(LocalDateTime.now())
+                .expiresAt(LocalDateTime.now().plusDays(7))
+                .build();
         tokenRepository.save(token);
     }
-    
+
+    public List<MaintenanceRequest> getAll() {
+        return requestRepository.findAll();
+    }
+
     public List<MaintenanceRequest> getByTechnician(Long techId) {
         return requestRepository.findByTechnicianId(techId);
     }
 
+    // US-BM1: Branch manager only sees their branch
     public List<MaintenanceRequest> getByBranch(Long branchId) {
         return requestRepository.findByBranchId(branchId);
     }
 
-    private List<MaintenanceRequest> getAll() { return requestRepository.findAll(); }
+    public List<MaintenanceRequest> getByStatus(String status) {
+        return requestRepository.findByStatus(RequestStatus.valueOf(status));
+    }
 
-    private void logActivity(Long userId, String action, String entityType, Long entityId, String details) {
-        Activity log = new ActivityLog();
-        log.setActionType(action);
-        log.setEntityType(entityType);
-        log.setEntityId(entityId);
-        log.setDetails(details);
-        log.setPerformedAt(LocalDateTime.now());
-        activityLogRepository.save(log);
-    
+    public MaintenanceRequest getById(Long id) {
+        return requestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
     }
 }

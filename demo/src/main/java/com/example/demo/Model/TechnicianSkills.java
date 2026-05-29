@@ -1,18 +1,26 @@
-package com.example.demo.Model;
+package com.example.mms.model;
 
-@Entity 
-@Table(name = "Technician_skills")
-public class TechnicianSkills {
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "technician_skills")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class TechnicianSkill {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "technician_id", nullable = false)
-    private User technician; //e.g Electrical etc
+    private User technician;
 
-    @Column(nullable = false, length = 100)
-    private String skillName;
+    @Column(name = "skill_name", nullable = false, length = 100)
+    private String skillName;   // e.g. Electrical, HVAC, Plumbing
 
     @Column(columnDefinition = "TEXT")
     private String description;
