@@ -1,7 +1,7 @@
 package com.example.demo.Repository;
 
-import com.example.mms.model.MaintenanceRequest;
-import com.example.mms.model.RequestStatus;
+import com.example.demo.Enum.RequestStatus;
+import com.example.demo.Model.MaintenanceRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,9 +1,11 @@
-package com.example.mms.service;
+package com.example.demo.Service;
 
-import com.example.mms.dto.CompletionReportRequest;
-import com.example.mms.dto.ReviewReportRequest;
-import com.example.mms.model.*;
-import com.example.mms.repository.*;
+import com.example.demo.dto.CompletionReportRequest;
+import com.example.demo.dto.ReviewReportRequest;
+import com.example.demo.Enum.ApprovalStatus;
+import com.example.demo.Enum.RequestStatus;
+import com.example.demo.Model.*;
+import com.example.demo.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +48,7 @@ public class CompletionReportService {
         requestRepository.save(request);
 
         activityLogService.log(req.getTechnicianId(), "SUBMIT_COMPLETION_REPORT",
-                "CompletionReport", saved.getId(),
+                saved.getId(), "CompletionReport",
                 "Submitted completion report for request: " + req.getRequestId());
         return saved;
     }
@@ -74,7 +76,7 @@ public class CompletionReportService {
         }
 
         activityLogService.log(req.getManagerId(), "REVIEW_COMPLETION_REPORT",
-                "CompletionReport", reportId, "Decision: " + decision);
+                reportId, "CompletionReport", "Decision: " + decision);
 
         return saved;
     }

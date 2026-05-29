@@ -1,7 +1,7 @@
 package com.example.demo.Controller;
 
-import com.example.mms.model.ActivityLog;
-import com.example.mms.service.ActivityLogService;
+import com.example.demo.Model.ActivityLog;
+import com.example.demo.Service.ActivityLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

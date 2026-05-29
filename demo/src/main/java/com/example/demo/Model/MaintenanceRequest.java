@@ -1,9 +1,12 @@
-package com.example.mms.model;
+package com.example.demo.Model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.*; 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.example.demo.Enum.Priority;
+import com.example.demo.Enum.RequestStatus;
 
 @Entity
 @Table(name = "maintenance_requests",

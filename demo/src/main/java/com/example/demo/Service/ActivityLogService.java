@@ -1,9 +1,9 @@
 package com.example.demo.Service;
 
-import com.example.mms.model.ActivityLog;
-import com.example.mms.model.User;
-import com.example.mms.repository.ActivityLogRepository;
-import com.example.mms.repository.UserRepository;
+import com.example.demo.Model.ActivityLog;
+import com.example.demo.Model.User;
+import com.example.demo.Repository.*;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class ActivityLogService {
     private final ActivityLogRepository ActivityLogRepository;
     private final UserRepository userRepository;
 
-    public void log(Long userId, String actionType, Long entityId, String details) {
+    public void log(Long userId, String actionType, Long entityId, String details, String entityType) {
         User user = userRepository.findById(userId).orElse(null);
         ActivityLog log = ActivityLog.builder()
                 .user(user)
@@ -31,23 +31,23 @@ public class ActivityLogService {
     }
 
     public List<ActivityLog> getByUser(Long userId) {
-        return activityLogRepository.findByUserId(userId);
+        return ActivityLogRepository.findByUserId(userId);
     }
 
-    public List<ActivityLog> getByUserAndDateRange(Long userId, LocalDaetTime from, LocalDateTime to) {
-        return activityLogRepository.findByUserIdAndPerformedAtBetween(userId, from, to);
+    public List<ActivityLog> getByUserAndDateRange(Long userId, LocalDateTime from, LocalDateTime to) {
+        return ActivityLogRepository.findByUserIdAndPerformedAtBetween(userId, from, to);
     }
 
     public List<ActivityLog> getAll() {
-        return activityLogRepository.findAll();
+        return ActivityLogRepository.findAll();
     }
 
     public List<ActivityLog> getAllByDateRange(LocalDateTime from, LocalDateTime to) {
-        return activityLogRepository.findByPerformedAtBetween(from, to);
+        return ActivityLogRepository.findByPerformedBetween(from, to);
     }
 
     public List<ActivityLog> getByActionType(String actionType) {
-        return activityLogRepository.findByActionType(actionType);
+        return ActivityLogRepository.findByActionType(actionType);
     }
 
 }

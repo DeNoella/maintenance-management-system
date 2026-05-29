@@ -1,9 +1,9 @@
-package com.example.mms.controller;
+package com.example.demo.Controller;
 
-import com.example.mms.dto.CompletionReportRequest;
-import com.example.mms.dto.ReviewReportRequest;
-import com.example.mms.model.CompletionReport;
-import com.example.mms.service.CompletionReportService;
+import com.example.demo.dto.*;
+import com.example.demo.Model.*;
+import com.example.demo.Service.CompletionReportService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

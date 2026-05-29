@@ -1,7 +1,7 @@
 package com.example.demo.config;
 
 
-import com.example.mms.security.JwtFilter;
+import com.example.demo.Security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +27,7 @@ public class SecurityConfig {
             .sessionManagement(session -> SessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth 
                 // Public endpoints 
-                .requestsMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
 
                 // Admin only 
                 .requestMatchers("/api/users/admin/**").hasRole("ADMIN")
@@ -49,10 +49,15 @@ public class SecurityConfig {
                 //Activity logs - each role sees own logs 
                 .requestMatchers("/api/activity-logs/**").authenticated()
 
-                .anyRequest().aunthenticated()
+                .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    private Object SessionCreationPolicy(SessionCreationPolicy stateless) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'SessionCreationPolicy'");
     }
 
     @Bean 

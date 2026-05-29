@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class TokenVerifyRequest {
-    private String tokrnCode;
+    private String tokenCode;
     private Long managerId;
     private String notes;
 }

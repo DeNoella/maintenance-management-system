@@ -1,8 +1,10 @@
-package com.example.mms.model;
+package com.example.demo.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+
+import com.example.demo.Enum.ApprovalStatus;
 
 @Entity
 @Table(name = "completion_reports")

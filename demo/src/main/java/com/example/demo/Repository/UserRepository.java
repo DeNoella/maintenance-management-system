@@ -1,7 +1,7 @@
 package com.example.demo.Repository;
 
-import com.example.mms.model.Role;
-import com.example.mms.model.User;
+import com.example.demo.Enum.Role;
+import com.example.demo.Model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,8 +1,8 @@
 package com.example.demo.Controller;
 
-import com.example.mms.dto.LoginRequest;
-import com.example.mms.dto.LoginResponse;
-import com.example.mms.service.AuthService;
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.LoginResponse;
+import com.example.demo.Service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +22,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+        return ResponseEntity.ok(AuthService.login(request));
     }
 
 }

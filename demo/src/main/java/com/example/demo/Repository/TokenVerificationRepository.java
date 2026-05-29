@@ -1,6 +1,6 @@
 package com.example.demo.Repository;
 
-import com.example.mms.model.TokenVerification;
+import com.example.demo.Model.TokenVerification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
