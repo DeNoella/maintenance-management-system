@@ -65,7 +65,7 @@ public class BranchController {
      * Get a single branch by ID
      * GET /api/branches/{id}
      */
-    @GetMapping("{/id}")
+    @GetMapping("{id}")
     public ResponseEntity<Branch> getById(
         @PathVariable Long id) {
             return ResponseEntity.ok(branchService.getById(id));

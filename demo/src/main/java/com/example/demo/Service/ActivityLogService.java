@@ -43,7 +43,7 @@ public class ActivityLogService {
     }
 
     public List<ActivityLog> getAllByDateRange(LocalDateTime from, LocalDateTime to) {
-        return ActivityLogRepository.findByPerformedBetween(from, to);
+        return ActivityLogRepository.findByPerformedAtBetween(from, to);
     }
 
     public List<ActivityLog> getByActionType(String actionType) {

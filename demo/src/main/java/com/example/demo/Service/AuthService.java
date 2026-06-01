@@ -38,8 +38,9 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name(), user.getId());
 
-        activityLogService.log(user.getId(), "LOGIN", user.getId(), "User",
-                "User logged in: " + user.getUsername());
+       activityLogService.log(user.getId(), "LOGIN", user.getId(), "User", "User logged in: " + user.getUsername());
+
+
 
         return new LoginResponse(token, user.getRole().name(), user.getId(), user.getFullName());
     }
