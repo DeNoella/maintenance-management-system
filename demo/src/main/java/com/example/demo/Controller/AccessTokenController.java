@@ -24,9 +24,13 @@ public class AccessTokenController {
      * Returns: list of tokens with branch name, visit date, status (active/expired)
      */
     @GetMapping("/technician/{techId}")
-    public ResponseEntity<List<AccessToken>> getByTechnician(@PathVariable Long techId) {
-        return (ResponseEntity<List<AccessToken>>) ResponseEntity.ok();
-    }
+public ResponseEntity<List<AccessToken>> getByTechnician(
+        @PathVariable Long techId) {
+
+    return ResponseEntity.ok(
+            tokenService.getTokensByTechnician(techId)
+    );
+}
 
     /**
      * US-BM2 — Branch Manager scans/verifies a technician token
