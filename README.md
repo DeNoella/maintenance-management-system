@@ -162,6 +162,35 @@ The app starts on `http://localhost:8080` and creates all tables automatically.
 
 ---
 
+## Accessing the API Documentation (Swagger UI)
+
+Once the app is running, open your browser and go to:
+
+http://localhost:8080/swagger-ui/index.html
+
+You will see an interactive list of all API endpoints grouped by controller. You can expand each endpoint, see the required request body or parameters, and send test requests directly from the browser.
+
+### How to authenticate in Swagger
+
+Most endpoints require a JWT token. To test protected routes:
+
+1. Use the **POST /api/auth/login** endpoint to log in with your username and password
+2. Copy the token from the response
+3. Click the **Authorize** button at the top right of the Swagger page
+4. In the field, enter:
+
+Bearer <paste_your_token_here>
+
+5. Click **Authorize**, then **Close**
+
+All subsequent requests you make from Swagger will now include your token automatically.
+
+### Swagger is only available in development
+
+The Swagger UI is enabled by default when running locally. Do not expose it in a production environment without proper access controls.
+
+---
+
 ## API Quick Reference
 
 | Method | Endpoint | Who |
